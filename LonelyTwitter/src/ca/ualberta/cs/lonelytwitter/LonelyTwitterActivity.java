@@ -10,7 +10,9 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import ca.ualberta.cs.lonelytwitter.data.FileDataManager;
+import ca.ualberta.cs.lonelytwitter.data.GsonFileDataManager;
 import ca.ualberta.cs.lonelytwitter.data.IDataManager;
+import ca.ualberta.cs.lonelytwitter.data.Summary;
 
 public class LonelyTwitterActivity extends Activity {
 
@@ -21,8 +23,11 @@ public class LonelyTwitterActivity extends Activity {
 	private ListView oldTweetsList;
 
 	private ArrayList<Tweet> tweets;
+	
+	private Summary tweetSummary;
 
 	private ArrayAdapter<Tweet> tweetsViewAdapter;
+	private int numberTweets = 0;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -31,8 +36,8 @@ public class LonelyTwitterActivity extends Activity {
 
 		setContentView(R.layout.main);
 
-		dataManager = new FileDataManager(this);
-
+		dataManager = new GsonFileDataManager(this);
+		
 		bodyText = (EditText) findViewById(R.id.body);
 		oldTweetsList = (ListView) findViewById(R.id.oldTweetsList);
 	}
@@ -48,12 +53,13 @@ public class LonelyTwitterActivity extends Activity {
 	}
 
 	public void save(View v) {
-
+		
 		String text = bodyText.getText().toString();
 
 		Tweet tweet = new Tweet(new Date(), text);
 		tweets.add(tweet);
-
+		numberTweets++;
+		calculateLatency(tweets);
 		tweetsViewAdapter.notifyDataSetChanged();
 
 		bodyText.setText("");
@@ -65,6 +71,17 @@ public class LonelyTwitterActivity extends Activity {
 		tweets.clear();
 		tweetsViewAdapter.notifyDataSetChanged();
 		dataManager.saveTweets(tweets);
+	}
+	
+	
+	public void calculateLatency(ArrayList<Tweet> tweets2){
+		int Latency = 0;
+		for(int i = 0; i < tweets2.size()-1; i ++){
+			Tweet begin = tweets2.get(i);
+			Tweet end = tweets2.get(i+1);
+			long tempTime = begin.getTweetDate().getTime();
+			
+		}
 	}
 
 }
